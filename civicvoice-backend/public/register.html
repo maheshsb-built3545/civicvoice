@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CivicVoice - Create Account</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        --page-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        --surface: #ffffff;
+        --surface-elevated: #f8fafc;
+        --text: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --accent: #2563eb;
+        --accent-hover: #1d4ed8;
+        --accent-soft: #eff6ff;
+        --shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.15);
+      }
+
+      body[data-theme="dark"] {
+        color-scheme: dark;
+        --page-bg: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+        --surface: #0f172a;
+        --surface-elevated: #1e293b;
+        --text: #f8fafc;
+        --muted: #94a3b8;
+        --border: #334155;
+        --accent: #3b82f6;
+        --accent-hover: #60a5fa;
+        --accent-soft: #1e3a8a;
+        --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: var(--page-bg);
+        color: var(--text);
+        padding: 24px 16px;
+        transition: background 200ms ease, color 200ms ease;
+      }
+
+      .register-card {
+        width: min(94vw, 480px);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 40px 36px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(16px);
+        animation: fadeIn 300ms ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .card-header {
+        text-align: center;
+        margin-bottom: 28px;
+        position: relative;
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: -8px;
+        right: 0;
+        border: 1px solid var(--border);
+        background: var(--surface-elevated);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 180ms ease;
+      }
+
+      .theme-toggle:hover {
+        border-color: var(--accent);
+      }
+
+      .brand-badge {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        margin: 0 auto 16px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, var(--accent) 0%, #0f766e 100%);
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 1.4rem;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 1.65rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      p.subtitle {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      /* Role Selector Cards */
+      .role-label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--muted);
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      .role-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 24px;
+      }
+
+      .role-card {
+        border: 2px solid var(--border);
+        background: var(--surface-elevated);
+        border-radius: 14px;
+        padding: 12px 8px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 180ms ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .role-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+
+      .role-card.selected {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        color: var(--accent);
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.2);
+      }
+
+      .role-card .icon {
+        font-size: 1.4rem;
+      }
+
+      .role-card .role-title {
+        font-weight: 800;
+        font-size: 0.82rem;
+      }
+
+      .form-grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .form-group {
+        display: grid;
+        gap: 6px;
+      }
+
+      .form-group label {
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: var(--text);
+      }
+
+      .form-group input,
+      .form-group select {
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        background: var(--surface-elevated);
+        color: var(--text);
+        border-radius: 12px;
+        font-size: 0.98rem;
+        outline: none;
+        transition: border-color 180ms ease, box-shadow 180ms ease;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      }
+
+      .submit-btn {
+        margin-top: 8px;
+        border: none;
+        border-radius: 12px;
+        padding: 14px;
+        font-size: 1rem;
+        font-weight: 800;
+        cursor: pointer;
+        background: var(--accent);
+        color: #ffffff;
+        transition: background 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+      }
+
+      .submit-btn:hover {
+        background: var(--accent-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+      }
+
+      .submit-btn:disabled {
+        opacity: 0.6;
+        cursor: wait;
+        transform: none;
+      }
+
+      .error-msg {
+        min-height: 1.2rem;
+        color: #ef4444;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-align: center;
+        margin: 4px 0 0;
+      }
+
+      .footer-link {
+        margin-top: 24px;
+        text-align: center;
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+
+      .footer-link a {
+        color: var(--accent);
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .footer-link a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 400px) {
+        .role-grid {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+        
+        .role-card {
+          flex-direction: row;
+          justify-content: flex-start;
+          padding: 10px 16px;
+          gap: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register-card">
+      <div class="card-header">
+        <button class="theme-toggle" id="themeToggle" type="button">🌙 Dark mode</button>
+        <div class="brand-badge">CV</div>
+        <h1>Create CivicVoice Account</h1>
+        <p class="subtitle">Select your account role to get started</p>
+      </div>
+
+      <form id="registerForm">
+        <span class="role-label">Choose Account Type</span>
+        <div class="role-grid">
+          <div class="role-card selected" data-role="citizen">
+            <span class="icon">👤</span>
+            <span class="role-title">Citizen</span>
+          </div>
+          <div class="role-card" data-role="superadmin">
+            <span class="icon">⚙️</span>
+            <span class="role-title">Admin</span>
+          </div>
+        </div>
+
+        <input type="hidden" id="selectedRole" value="citizen" />
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="regName">Full Name</label>
+            <input id="regName" placeholder="e.g. Mahesh Borde" required />
+          </div>
+
+          <div class="form-group">
+            <label for="regEmail">Email Address</label>
+            <input id="regEmail" type="email" placeholder="name@example.com" required />
+          </div>
+
+          <div class="form-group">
+            <label for="regContact">Phone Number</label>
+            <input id="regContact" type="tel" placeholder="+919876543210" required />
+          </div>
+
+          <div class="form-group">
+            <label for="regPassword">Password</label>
+            <div style="position: relative;">
+              <input id="regPassword" type="password" placeholder="••••••••" required minlength="6" style="padding-right: 44px;" />
+              <button type="button" class="toggle-password" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--muted); padding: 4px; display: flex; align-items: center;" aria-label="Toggle password visibility">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">Create Account</button>
+          <div id="errorMsg" class="error-msg" role="alert"></div>
+        </div>
+      </form>
+
+      <div class="footer-link">
+        Already have an account? <a href="login.html">Sign In</a>
+      </div>
+    </div>
+
+    <script>
+      const registerForm = document.getElementById('registerForm');
+      const errorMsg = document.getElementById('errorMsg');
+      const themeToggle = document.getElementById('themeToggle');
+      const submitBtn = document.getElementById('submitBtn');
+      const selectedRoleInput = document.getElementById('selectedRole');
+      const roleCards = document.querySelectorAll('.role-card');
+
+      // Role Selector Cards Click Handler
+      roleCards.forEach((card) => {
+        card.addEventListener('click', () => {
+          roleCards.forEach((c) => c.classList.remove('selected'));
+          card.classList.add('selected');
+          const chosenRole = card.dataset.role;
+          selectedRoleInput.value = chosenRole;
+        });
+      });
+
+      // Theme toggle functionality
+      function applyTheme(theme) {
+        document.body.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
+        localStorage.setItem('civicvoice-theme', theme);
+        if (themeToggle) {
+          themeToggle.textContent = theme === 'dark' ? '☀️ Light mode' : '🌙 Dark mode';
+        }
+      }
+
+      const savedTheme = localStorage.getItem('civicvoice-theme');
+      const preferredTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      applyTheme(savedTheme || preferredTheme);
+
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          const nextTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+          applyTheme(nextTheme);
+        });
+      }
+
+      // Registration Form Submission
+      registerForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        errorMsg.textContent = '';
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating Account…';
+
+        const name = document.getElementById('regName').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const contact = document.getElementById('regContact').value.trim();
+        const password = document.getElementById('regPassword').value;
+        const role = selectedRoleInput.value;
+
+        try {
+          const response = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password, role, contact }),
+          });
+
+          const data = await response.json().catch(() => ({}));
+
+          if (!response.ok) {
+            throw new Error(data.message || 'Registration failed. Please try again.');
+          }
+
+          const token = data.token;
+          const userRole = data.user?.role || role;
+
+          // Redirect to operations dashboard with auth state
+          if (userRole === 'citizen') {
+            window.location.href = `citizen-dashboard.html?token=${encodeURIComponent(token)}`;
+          } else {
+            window.location.href = `dashboard.html?token=${encodeURIComponent(token)}&role=${encodeURIComponent(userRole)}`;
+          }
+        } catch (err) {
+          errorMsg.textContent = err.message || 'Registration failed. Please check inputs.';
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create Account';
+        }
+      });
+
+      const eyeSvg = `
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        </svg>
+      `;
+      const eyeOffSvg = `
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+        </svg>
+      `;
+
+      document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', () => {
+          const input = button.previousElementSibling;
+          if (input.type === 'password') {
+            input.type = 'text';
+            button.innerHTML = eyeOffSvg;
+          } else {
+            input.type = 'password';
+            button.innerHTML = eyeSvg;
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

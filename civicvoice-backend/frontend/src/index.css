@@ -1,0 +1,180 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --color-primary: var(--primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-foreground: var(--primary-foreground);
+  
+  --color-card: var(--card);
+  --color-card-muted: var(--card-muted);
+  --color-card-foreground: var(--card-foreground);
+  
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-foreground: var(--accent-foreground);
+  
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --font-outfit: 'Outfit', sans-serif;
+  --font-plus-jakarta: 'Plus Jakarta Sans', sans-serif;
+}
+
+:root {
+  --background: #fafafc;
+  --foreground: #0f172a; /* slate-900 */
+  --card: #ffffff;
+  --card-muted: #f1f5f9; /* slate-100 */
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #4f46e5; /* indigo-600 */
+  --primary-soft: rgba(79, 70, 229, 0.08);
+  --primary-foreground: #ffffff;
+  --accent: #4f46e5;
+  --accent-soft: rgba(79, 70, 229, 0.06);
+  --accent-foreground: #ffffff;
+  --success: #10b981; /* emerald-500 */
+  --success-soft: rgba(16, 185, 129, 0.1);
+  --warning: #f59e0b; /* amber-500 */
+  --warning-soft: rgba(245, 158, 11, 0.1);
+  --danger: #ef4444; /* red-500 */
+  --danger-soft: rgba(239, 68, 68, 0.1);
+  --info: #3b82f6; /* blue-500 */
+  --info-soft: rgba(59, 130, 246, 0.1);
+  --border: #e2e8f0; /* slate-200 */
+  --border-subtle: #f8fafc;
+  --radius: 12px;
+}
+
+.dark {
+  --background: #0a0b0f; /* Deep charcoal-navy */
+  --foreground: #f3f4f6; /* Slate-100 */
+  --card: #111319; /* Elevated slate-navy */
+  --card-muted: #1a1d24; /* More elevated container */
+  --card-foreground: #f3f4f6;
+  --popover: #111319;
+  --popover-foreground: #f3f4f6;
+  --primary: #6366f1; /* Indigo-500 */
+  --primary-soft: rgba(99, 102, 241, 0.15);
+  --primary-foreground: #ffffff;
+  --accent: #6366f1;
+  --accent-soft: rgba(99, 102, 241, 0.08);
+  --accent-foreground: #ffffff;
+  --success: #10b981;
+  --success-soft: rgba(16, 185, 129, 0.12);
+  --warning: #f59e0b;
+  --warning-soft: rgba(245, 158, 11, 0.12);
+  --danger: #ef4444;
+  --danger-soft: rgba(239, 68, 68, 0.12);
+  --info: #3b82f6;
+  --info-soft: rgba(59, 130, 246, 0.12);
+  --border: #1e222d; /* Subtle navy-charcoal border */
+  --border-subtle: #171a21;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Premium Dark/Light Mode Leaflet Map tiles styling */
+.dark .leaflet-tile {
+  filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(90%);
+}
+
+.dark .leaflet-container {
+  background: #111319 !important;
+}
+
+.leaflet-container {
+  background: #f1f5f9 !important;
+  font-family: inherit;
+  border-radius: var(--radius);
+}
+
+.dark .leaflet-bar a {
+  background-color: #111319 !important;
+  color: #f3f4f6 !important;
+  border-bottom: 1px solid #1e222d !important;
+}
+
+.leaflet-bar a {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* Custom premium elements */
+.premium-glow {
+  position: relative;
+}
+.premium-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(to right, rgba(99, 102, 241, 0.15), rgba(16, 185, 129, 0.15));
+  border-radius: inherit;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.premium-glow:hover::before {
+  opacity: 1;
+}
+
+/* Scrollbar tweaks */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Micro-animations */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+

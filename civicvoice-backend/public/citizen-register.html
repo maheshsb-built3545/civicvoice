@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CivicVoice - Create Citizen Account</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        --page-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        --surface: #ffffff;
+        --surface-elevated: #f8fafc;
+        --text: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --accent: #2563eb;
+        --accent-hover: #1d4ed8;
+        --shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.15);
+      }
+
+      body[data-theme="dark"] {
+        color-scheme: dark;
+        --page-bg: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+        --surface: #0f172a;
+        --surface-elevated: #1e293b;
+        --text: #f8fafc;
+        --muted: #94a3b8;
+        --border: #334155;
+        --accent: #3b82f6;
+        --accent-hover: #60a5fa;
+        --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: var(--page-bg);
+        color: var(--text);
+        padding: 24px 16px;
+        transition: background 200ms ease, color 200ms ease;
+      }
+
+      .register-card {
+        width: min(94vw, 420px);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 40px 36px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(16px);
+        animation: fadeIn 300ms ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .card-header {
+        text-align: center;
+        margin-bottom: 28px;
+        position: relative;
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: -8px;
+        right: 0;
+        border: 1px solid var(--border);
+        background: var(--surface-elevated);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 180ms ease;
+      }
+
+      .theme-toggle:hover {
+        border-color: var(--accent);
+      }
+
+      .brand-badge {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        background: var(--accent);
+        color: #ffffff;
+        display: grid;
+        place-items: center;
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin: 0 auto 16px;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+      }
+
+      h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0 0 6px 0;
+        letter-spacing: -0.025em;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 0.95rem;
+        margin: 0;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--surface-elevated);
+        color: var(--text);
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 150ms ease, box-shadow 150ms ease;
+      }
+
+      input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-soft, rgba(37, 99, 235, 0.15));
+      }
+
+      .phone-input-container {
+        display: flex;
+        align-items: center;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--surface-elevated);
+        color: var(--text);
+        font-size: 1rem;
+        width: 100%;
+      }
+      .phone-input-container .phone-prefix {
+        padding: 12px 0 12px 16px;
+        font-weight: 700;
+        color: var(--text);
+        font-size: 1rem;
+        user-select: none;
+      }
+      .phone-input-container input {
+        border: none !important;
+        background: transparent !important;
+        padding: 12px 16px 12px 8px !important;
+        color: var(--text) !important;
+        font-size: 1rem !important;
+        width: 100% !important;
+        outline: none !important;
+      }
+
+      .submit-btn {
+        width: 100%;
+        padding: 14px;
+        border-radius: 12px;
+        border: none;
+        background: var(--accent);
+        color: #ffffff;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 150ms ease, transform 100ms ease;
+        margin-top: 8px;
+      }
+
+      .submit-btn:hover {
+        background: var(--accent-hover);
+      }
+
+      .submit-btn:active {
+        transform: scale(0.98);
+      }
+
+      .submit-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      .error-banner {
+        color: #ef4444;
+        background: #fef2f2;
+        border: 1px solid #fee2e2;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+        display: none;
+      }
+
+      body[data-theme="dark"] .error-banner {
+        color: #fca5a5;
+        background: #450a0a;
+        border-color: #7f1d1d;
+      }
+
+      .footer-links {
+        text-align: center;
+        margin-top: 24px;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .footer-links a {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .footer-links a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register-card">
+      <div class="card-header">
+        <button class="theme-toggle" id="themeToggle">🌙 Dark mode</button>
+        <div class="brand-badge">CV</div>
+        <h1>Join CivicVoice</h1>
+        <p class="subtitle">Create an account to report community issues</p>
+      </div>
+
+      <div class="error-banner" id="errorMsg"></div>
+
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" placeholder="e.g. Ramesh Kumar" required />
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <div class="phone-input-container">
+            <span class="phone-prefix">+91</span>
+            <input type="tel" id="phone" placeholder="9876543210" pattern="\d{10}" maxlength="10" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div style="position: relative;">
+            <input type="password" id="password" placeholder="••••••••" required style="padding-right: 44px;" />
+            <button type="button" class="toggle-password" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--muted); padding: 4px; display: flex; align-items: center;" aria-label="Toggle password visibility">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Create Account</button>
+      </form>
+
+      <div class="footer-links">
+        Already have an account? <a href="citizen-login.html">Sign In</a>
+      </div>
+    </div>
+
+    <script>
+      const registerForm = document.getElementById('registerForm');
+      const errorMsg = document.getElementById('errorMsg');
+      const submitBtn = document.getElementById('submitBtn');
+      const themeToggle = document.getElementById('themeToggle');
+
+      // Theme toggle functionality
+      function applyTheme(theme) {
+        document.body.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
+        localStorage.setItem('civicvoice-theme', theme);
+        if (themeToggle) {
+          themeToggle.textContent = theme === 'dark' ? '☀️ Light mode' : '🌙 Dark mode';
+        }
+      }
+
+      const savedTheme = localStorage.getItem('civicvoice-theme');
+      const preferredTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      applyTheme(savedTheme || preferredTheme);
+
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          const nextTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+          applyTheme(nextTheme);
+        });
+      }
+
+      registerForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        errorMsg.style.display = 'none';
+        errorMsg.textContent = '';
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating Account…';
+
+        const name = document.getElementById('name').value.trim();
+        const rawPhone = document.getElementById('phone').value.trim();
+        const phone = rawPhone.startsWith('+') ? rawPhone : '+91' + rawPhone;
+        const password = document.getElementById('password').value;
+
+        try {
+          const response = await fetch('/api/citizen/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, phone, password }),
+          });
+
+          const data = await response.json().catch(() => ({}));
+
+          if (!response.ok) {
+            throw new Error(data.message || 'Registration failed. Please try again.');
+          }
+
+          const token = data.token;
+          localStorage.setItem('citizen-token', token);
+
+          window.location.href = 'citizen-dashboard.html';
+        } catch (err) {
+          errorMsg.textContent = err.message || 'Registration failed. Please try again.';
+          errorMsg.style.display = 'block';
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create Account';
+        }
+      });
+
+      const eyeSvg = `
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        </svg>
+      `;
+      const eyeOffSvg = `
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px;">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+        </svg>
+      `;
+
+      document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', () => {
+          const input = button.previousElementSibling;
+          if (input.type === 'password') {
+            input.type = 'text';
+            button.innerHTML = eyeOffSvg;
+          } else {
+            input.type = 'password';
+            button.innerHTML = eyeSvg;
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

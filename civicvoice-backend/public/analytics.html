@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analytics - CivicVoice</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        --accent: #2563eb;
+        --accent-soft: #eff6ff;
+        --text: #16324f;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --surface: #ffffff;
+        --page: #f4f7fb;
+        --surface-muted: #f8fafc;
+        --topbar-bg: rgba(255, 255, 255, 0.72);
+      }
+
+      body[data-theme="dark"] {
+        color-scheme: dark;
+        --accent: #60a5fa;
+        --accent-soft: #1e3a8a;
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --border: #334155;
+        --surface: #0f172a;
+        --page: #020617;
+        --surface-muted: #0b1220;
+        --topbar-bg: rgba(15, 23, 42, 0.8);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--page);
+        color: var(--text);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .app-shell {
+        display: flex;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f8fbff 0%, var(--page) 100%);
+      }
+
+      .sidebar {
+        width: 260px;
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        padding: 24px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+        font-size: 1.15rem;
+        color: var(--text);
+      }
+
+      .brand-mark {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, var(--accent) 0%, #0f766e 100%);
+        color: #ffffff;
+        font-weight: 700;
+      }
+
+      .nav-links {
+        display: grid;
+        gap: 8px;
+        margin-top: 24px;
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        font-weight: 600;
+        color: #475569;
+        transition: background 180ms ease, color 180ms ease;
+      }
+
+      .nav-link:hover,
+      .nav-link.active {
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+
+      .nav-link.hidden {
+        display: none;
+      }
+
+      .main-panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding: 24px 32px 18px;
+        background: var(--topbar-bg);
+        border-bottom: 1px solid var(--border);
+        backdrop-filter: blur(10px);
+      }
+
+      .topbar h2 {
+        margin: 0;
+        font-size: 1.1rem;
+      }
+
+      .topbar .meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .user-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+      }
+
+      .user-pill .avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      .user-pill .name {
+        font-weight: 700;
+        font-size: 0.95rem;
+      }
+
+      .user-pill .role {
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .toolbar .logout {
+        color: var(--accent);
+        font-weight: 600;
+        cursor: pointer;
+        padding: 8px 12px;
+        border-radius: 8px;
+        transition: background 180ms ease;
+      }
+
+      .toolbar .logout:hover {
+        background: var(--accent-soft);
+      }
+
+      .content {
+        padding: 24px 32px 32px;
+        display: grid;
+        gap: 24px;
+        overflow-y: auto;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+        padding: 20px;
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .card-header h3 {
+        margin: 0;
+        font-size: 1rem;
+      }
+
+      .card-header p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .kpi-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 16px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .kpi-label {
+        color: var(--muted);
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .kpi-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .kpi-value.empty {
+        color: var(--muted);
+      }
+
+      .breakdown-section {
+        margin-bottom: 20px;
+      }
+
+      .breakdown-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        margin-bottom: 12px;
+        color: var(--text);
+      }
+
+      .breakdown-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .breakdown-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .breakdown-label {
+        min-width: 90px;
+        font-size: 0.9rem;
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .breakdown-bar {
+        flex: 1;
+        height: 24px;
+        background: var(--accent-soft);
+        border-radius: 6px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--border);
+      }
+
+      .breakdown-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), #1d4ed8);
+        border-radius: 6px;
+        transition: width 300ms ease;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 8px;
+        min-width: 40px;
+      }
+
+      .breakdown-bar-fill.empty {
+        background: #cbd5e1;
+        color: var(--text);
+      }
+
+      .breakdown-count {
+        min-width: 40px;
+        text-align: right;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .ward-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .ward-table thead {
+        background: var(--surface-muted);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .ward-table th {
+        padding: 12px 16px;
+        text-align: left;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .ward-table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .ward-table tbody tr:hover {
+        background: var(--surface-muted);
+      }
+
+      .ward-name {
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .ward-count {
+        text-align: right;
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .access-restricted {
+        padding: 40px 32px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 400px;
+        gap: 16px;
+      }
+
+      .access-restricted-icon {
+        font-size: 3rem;
+        opacity: 0.5;
+      }
+
+      .access-restricted-message {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+
+      .access-restricted-detail {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .loading {
+        padding: 40px 32px;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      .error {
+        padding: 20px;
+        background: #fee2e2;
+        border: 1px solid #fecaca;
+        border-radius: 12px;
+        color: #b91c1c;
+        margin-bottom: 20px;
+      }
+
+      .theme-toggle {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        cursor: pointer;
+      }
+
+      @media (max-width: 860px) {
+        .app-shell {
+          flex-direction: column;
+        }
+
+        .sidebar {
+          width: 100%;
+          border-right: 0;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .topbar,
+        .content {
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+
+        .kpi-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div>
+          <div class="brand" aria-label="CivicVoice home">
+            <div class="brand-mark">CV</div>
+            <span>CivicVoice</span>
+          </div>
+          <nav class="nav-links" aria-label="Sidebar navigation">
+            <a href="dashboard.html" class="nav-link" id="dashboardLink">Dashboard</a>
+            <a href="analytics.html" class="nav-link active" id="analyticsLink">Analytics</a>
+            <a href="#" class="nav-link hidden" id="officersLink">Officers</a>
+          </nav>
+        </div>
+        <a href="#" class="nav-link" id="logoutLink">Logout</a>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div>
+            <h2>Analytics dashboard</h2>
+          </div>
+          <div class="meta">
+            <div class="user-pill" id="userRole">
+              <div class="avatar" id="userAvatar">U</div>
+              <div>
+                <div class="name">Loading…</div>
+                <div class="role">Role loading…</div>
+              </div>
+            </div>
+            <div class="toolbar">
+              <button class="theme-toggle" id="themeToggle" type="button">🌙 Dark mode</button>
+              <a href="#" class="logout" id="logoutBtn">Logout</a>
+            </div>
+          </div>
+        </header>
+
+        <section class="content">
+          <div id="restrictedMessage" class="access-restricted" style="display: none;">
+            <div class="access-restricted-icon">🔒</div>
+            <div class="access-restricted-message">Access Restricted</div>
+            <div class="access-restricted-detail">Analytics are only available to administrators.</div>
+          </div>
+
+          <div id="loadingMessage" class="loading">Loading analytics…</div>
+
+          <div id="analyticsContent" style="display: none;">
+            <div id="errorMessage"></div>
+
+            <div class="kpi-grid">
+              <div class="kpi-card">
+                <div class="kpi-label">Total Complaints</div>
+                <div class="kpi-value" id="totalComplaints">—</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Resolved Count</div>
+                <div class="kpi-value" id="resolvedCount">—</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Avg Resolution Time</div>
+                <div class="kpi-value" id="avgResolutionTime">—</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3>Breakdown by Status</h3>
+                </div>
+              </div>
+              <div class="breakdown-section">
+                <div class="breakdown-list" id="statusBreakdown">
+                  <div class="loading">Loading…</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3>Breakdown by Category</h3>
+                </div>
+              </div>
+              <div class="breakdown-section">
+                <div class="breakdown-list" id="categoryBreakdown">
+                  <div class="loading">Loading…</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3>Complaints by Ward</h3>
+                </div>
+              </div>
+              <table class="ward-table">
+                <thead>
+                  <tr>
+                    <th>Ward Name</th>
+                    <th style="text-align: right;">Complaint Count</th>
+                  </tr>
+                </thead>
+                <tbody id="wardTableBody">
+                  <tr>
+                    <td colspan="2" style="text-align: center; color: var(--muted);">Loading…</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      async function initAnalytics() {
+        try {
+          // Get URL parameters
+          const params = new URLSearchParams(window.location.search);
+          const token = params.get('token');
+          const role = params.get('role');
+          const currentRole = (role || '').toString().trim().toLowerCase();
+
+          if (!token) {
+            window.location.replace('/index.html?openLogin=true');
+            return;
+          }
+
+          // Get DOM elements
+          const userNameEl = document.querySelector('#userRole .name');
+          const userRoleEl = document.querySelector('#userRole .role');
+          const userAvatarEl = document.getElementById('userAvatar');
+          const logoutLink = document.getElementById('logoutLink');
+          const logoutBtn = document.getElementById('logoutBtn');
+          const themeToggle = document.getElementById('themeToggle');
+          const restrictedMessage = document.getElementById('restrictedMessage');
+          const loadingMessage = document.getElementById('loadingMessage');
+          const analyticsContent = document.getElementById('analyticsContent');
+          const errorMessage = document.getElementById('errorMessage');
+          const dashboardLink = document.getElementById('dashboardLink');
+          const analyticsLink = document.getElementById('analyticsLink');
+          const officersLink = document.getElementById('officersLink');
+
+          // Update user display
+          try {
+            const displayName = (() => {
+              try {
+                const payload = token.split('.')[1];
+                const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+                const padded = normalized + '='.repeat((4 - (normalized.length % 4)) % 4);
+                const decoded = JSON.parse(atob(padded));
+                return decoded.username || decoded.name || decoded.email || 'User';
+              } catch {
+                return 'User';
+              }
+            })();
+            const roleLabel = role ? role.charAt(0).toUpperCase() + role.slice(1) : 'User';
+
+            if (userNameEl) userNameEl.textContent = displayName;
+            if (userRoleEl) userRoleEl.textContent = roleLabel;
+            if (userAvatarEl) userAvatarEl.textContent = displayName.charAt(0).toUpperCase();
+          } catch (err) {
+            console.error('Error updating user display:', err);
+          }
+
+          // Update navigation
+          try {
+            if (dashboardLink) dashboardLink.href = `dashboard.html?token=${encodeURIComponent(token)}&role=${encodeURIComponent(role)}`;
+            if (analyticsLink) analyticsLink.href = `analytics.html?token=${encodeURIComponent(token)}&role=${encodeURIComponent(role)}`;
+            if (role === 'admin' && officersLink) officersLink.classList.remove('hidden');
+          } catch (err) {
+            console.error('Error updating navigation:', err);
+          }
+
+          function applyTheme(theme) {
+            document.body.dataset.theme = theme;
+            document.documentElement.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
+            localStorage.setItem('civicvoice-theme', theme);
+            if (themeToggle) {
+              themeToggle.textContent = theme === 'dark' ? '☀️ Light mode' : '🌙 Dark mode';
+            }
+          }
+
+          const savedTheme = localStorage.getItem('civicvoice-theme');
+          const preferredTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          applyTheme(savedTheme || preferredTheme);
+
+          if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+              const nextTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+              applyTheme(nextTheme);
+            });
+          }
+
+          // Set up logout
+          const handleLogout = (event) => {
+            event.preventDefault();
+            localStorage.clear();
+            sessionStorage.clear();
+            document.cookie.split(";").forEach((c) => {
+              document.cookie = c
+                .replace(/^ +/, "")
+                .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+            });
+            window.location.replace('/index.html?openLogin=true');
+          };
+          if (logoutLink) logoutLink.addEventListener('click', handleLogout);
+          if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+
+          // Check admin access
+          if (currentRole !== 'admin') {
+            loadingMessage.style.display = 'none';
+            restrictedMessage.style.display = 'flex';
+            return;
+          }
+
+          // Fetch and display analytics
+          const response = await fetch('/api/admin/analytics', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          // Update KPIs
+          const totalEl = document.getElementById('totalComplaints');
+          if (totalEl) totalEl.textContent = data.totalComplaints || 0;
+
+          const resolvedEl = document.getElementById('resolvedCount');
+          if (resolvedEl) {
+            const resolvedCount = (data.byStatus || []).find(s => s.status === 'resolved')?.count || 0;
+            resolvedEl.textContent = resolvedCount;
+          }
+
+          const avgResEl = document.getElementById('avgResolutionTime');
+          if (avgResEl) {
+            const avgResTime = data.avgResolutionTimeHours;
+            if (avgResTime === null) {
+              avgResEl.textContent = 'N/A';
+              avgResEl.classList.add('empty');
+            } else {
+              avgResEl.textContent = `${avgResTime}h`;
+            }
+          }
+
+          // Update status breakdown
+          const statusBreakdown = document.getElementById('statusBreakdown');
+          if (statusBreakdown) {
+            const statusItems = data.byStatus || [];
+            const maxStatusCount = Math.max(...statusItems.map(s => s.count), 1);
+            statusBreakdown.innerHTML = statusItems.length === 0
+              ? '<div style="color: var(--muted);">No data available</div>'
+              : statusItems.map(item => {
+                  const percentage = (item.count / maxStatusCount) * 100;
+                  const barLabel = item.count > 0 ? item.count : '';
+                  return `<div class="breakdown-item">
+                    <div class="breakdown-label">${item.status}</div>
+                    <div class="breakdown-bar">
+                      <div class="breakdown-bar-fill ${item.count === 0 ? 'empty' : ''}" style="width: ${percentage}%;">
+                        ${percentage > 15 ? `<span style="color: white; font-weight: 600; font-size: 0.8rem;">${barLabel}</span>` : ''}
+                      </div>
+                    </div>
+                    <div class="breakdown-count">${item.count}</div>
+                  </div>`;
+                }).join('');
+          }
+
+          // Update category breakdown
+          const categoryBreakdown = document.getElementById('categoryBreakdown');
+          if (categoryBreakdown) {
+            const categoryItems = data.byCategory || [];
+            const maxCategoryCount = Math.max(...categoryItems.map(c => c.count), 1);
+            categoryBreakdown.innerHTML = categoryItems.length === 0
+              ? '<div style="color: var(--muted);">No data available</div>'
+              : categoryItems.map(item => {
+                  const percentage = (item.count / maxCategoryCount) * 100;
+                  const barLabel = item.count > 0 ? item.count : '';
+                  const categoryName = item.category || '(unspecified)';
+                  return `<div class="breakdown-item">
+                    <div class="breakdown-label">${categoryName}</div>
+                    <div class="breakdown-bar">
+                      <div class="breakdown-bar-fill ${item.count === 0 ? 'empty' : ''}" style="width: ${percentage}%;">
+                        ${percentage > 15 ? `<span style="color: white; font-weight: 600; font-size: 0.8rem;">${barLabel}</span>` : ''}
+                      </div>
+                    </div>
+                    <div class="breakdown-count">${item.count}</div>
+                  </div>`;
+                }).join('');
+          }
+
+          // Update ward table
+          const wardTableBody = document.getElementById('wardTableBody');
+          if (wardTableBody) {
+            const wardItems = data.byWard || [];
+            wardTableBody.innerHTML = wardItems.length === 0
+              ? '<tr><td colspan="2" style="text-align: center; color: var(--muted);">No wards with complaints</td></tr>'
+              : wardItems.map(item => {
+                  const wardName = item.wardName || '(No Ward)';
+                  return `<tr>
+                    <td class="ward-name">${wardName}</td>
+                    <td class="ward-count">${item.count}</td>
+                  </tr>`;
+                }).join('');
+          }
+
+          // Show content, hide loading
+          loadingMessage.style.display = 'none';
+          analyticsContent.style.display = 'block';
+        } catch (error) {
+          console.error('Analytics error:', error);
+          const loadingMessage = document.getElementById('loadingMessage');
+          const analyticsContent = document.getElementById('analyticsContent');
+          const errorMessage = document.getElementById('errorMessage');
+          if (loadingMessage) loadingMessage.style.display = 'none';
+          if (analyticsContent) analyticsContent.style.display = 'block';
+          if (errorMessage) errorMessage.innerHTML = `<div class="error">Failed to load analytics: ${error.message}</div>`;
+        }
+      }
+
+      // Start initialization when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAnalytics);
+      } else {
+        initAnalytics();
+      }
+    </script>
+  </body>
+</html>
