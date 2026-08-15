@@ -23,23 +23,24 @@ async function seedUsers() {
     const adminHash = await bcrypt.hash(adminPassword, 10);
     const anitaHash = await bcrypt.hash(anitaPassword, 10);
 
-    await User.create([
-      { 
-        name: 'Super Admin', 
-        email: 'admin@civicvoice.gov', 
-        username: 'admin', 
-        passwordHash: adminHash, 
-        role: 'admin' 
-      },
-      { 
-        name: 'Shanaya Deshmukh', 
-        email: 'shanaya@civicvoice.org', 
-        username: 'shanaya', 
-        passwordHash: anitaHash, 
-        role: 'officer', 
-        officerId: anita._id 
-      },
-    ]);
+    const adminUser = await User.create({ 
+      name: 'Super Admin', 
+      email: 'admin@civicvoice.gov', 
+      username: 'admin', 
+      passwordHash: adminHash, 
+      role: 'admin' 
+    });
+
+    const officerUser = await User.create({ 
+      name: 'Shanaya Deshmukh', 
+      email: 'shanaya@civicvoice.org', 
+      username: 'shanaya', 
+      passwordHash: anitaHash, 
+      role: 'officer'
+    });
+
+    anita.userId = officerUser._id;
+    await anita.save();
 
     console.log('Seeded users:');
     console.log(' - admin -> admin@civicvoice.gov /', adminPassword);

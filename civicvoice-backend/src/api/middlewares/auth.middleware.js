@@ -42,7 +42,10 @@ async function authMiddleware(req, res, next) {
       }
     } else if (decoded.role === 'officer') {
       const Officer = require('../../models/Officer');
-      const officer = await Officer.findById(decoded.id);
+      let officer = await Officer.findById(decoded.id);
+      if (!officer) {
+        officer = await Officer.findOne({ userId: decoded.id });
+      }
       if (!officer || officer.active === false || officer.isDeleted === true || (officer.tokenVersion !== undefined && officer.tokenVersion !== decoded.tokenVersion)) {
         return next(new AppError('UNAUTHORIZED', 401, 'Officer account is deactivated or deleted'));
       }
