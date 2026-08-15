@@ -57,7 +57,7 @@ const currentPhone = decoded ? decoded.citizenId || "" : (urlPhone || "Citizen")
 
 export default function CitizenApp() {
   const [isDark, setIsDark] = useState(() => {
-    return localStorage.getItem("theme") !== "light"
+    return localStorage.getItem("theme") === "dark"
   })
 
   const [complaints, setComplaints] = useState<any[]>([])

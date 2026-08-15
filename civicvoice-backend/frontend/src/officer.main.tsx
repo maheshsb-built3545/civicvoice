@@ -44,7 +44,7 @@ export default function OfficerApp() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const [isDark, setIsDark] = useState(() => {
-    return localStorage.getItem("theme") !== "light"
+    return localStorage.getItem("theme") === "dark"
   })
 
   useEffect(() => {

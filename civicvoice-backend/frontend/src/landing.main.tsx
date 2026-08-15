@@ -38,7 +38,7 @@ import { Badge } from "./components/ui/Badge"
 
 export default function LandingApp() {
   const [isDark, setIsDark] = useState(() => {
-    return localStorage.getItem("theme") !== "light"
+    return localStorage.getItem("theme") === "dark"
   })
 
   const [showLogin, setShowLogin] = useState(false)
