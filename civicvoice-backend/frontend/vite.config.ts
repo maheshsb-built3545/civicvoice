@@ -1,11 +1,20 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import { resolve } from 'path'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
   server: {
     proxy: {
       '/api': 'http://localhost:5000'
@@ -14,10 +23,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        landing: resolve(__dirname, 'index.html'),
-        admin: resolve(__dirname, 'dashboard.html'),
-        officer: resolve(__dirname, 'officer-dashboard.html'),
-        citizen: resolve(__dirname, 'citizen-dashboard.html')
+        landing: path.resolve(__dirname, 'index.html'),
+        admin: path.resolve(__dirname, 'dashboard.html'),
+        officer: path.resolve(__dirname, 'officer-dashboard.html'),
+        citizen: path.resolve(__dirname, 'citizen-dashboard.html')
       }
     },
     outDir: '../public',
