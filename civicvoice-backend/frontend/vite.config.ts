@@ -29,7 +29,7 @@ export default defineConfig({
         citizen: path.resolve(__dirname, 'citizen-dashboard.html')
       }
     },
-    outDir: '../public',
+    outDir: 'dist',
     emptyOutDir: false
   }
 })
