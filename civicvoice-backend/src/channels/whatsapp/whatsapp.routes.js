@@ -10,13 +10,19 @@ router.get('/', (req, res) => {
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
 
-  if (mode === 'subscribe' && token === process.env.WHATSAPP_VERIFY_TOKEN) {
-    logger.info('WhatsApp webhook verification handshake successful');
-    return res.status(200).send(challenge);
+  // Check if mode and token are sent
+  if (mode && token) {
+    // Check the mode and token match your environment variable
+    if (mode === 'subscribe' && token === process.env.WHATSAPP_VERIFY_TOKEN) {
+      console.log('WEBHOOK_VERIFIED');
+      // CRITICAL: Return the challenge as plain text with 200 status
+      return res.status(200).send(challenge);
+    } else {
+      // Tokens do not match
+      return res.sendStatus(403);
+    }
   }
-
-  logger.warn('WhatsApp webhook verification handshake failed', { mode });
-  return res.sendStatus(403);
+  return res.sendStatus(400);
 });
 
 // POST /api/webhooks/whatsapp — receives incoming message events
