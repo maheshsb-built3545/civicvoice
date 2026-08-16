@@ -7,6 +7,7 @@
 
 const path = require('path');
 const express = require('express');
+const cors = require('cors');
 
 const { traceIdMiddleware } = require('./utils/traceId');
 const errorHandler = require('./api/middlewares/errorHandler');
@@ -36,6 +37,15 @@ function createApp() {
   // -----------------------------------------------------------------------
   // Core middleware
   // -----------------------------------------------------------------------
+
+  app.use(cors({
+    origin: [
+      'https://civicvoice-bay.vercel.app',
+      'http://localhost:5173'
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
+  }));
 
   app.use(traceIdMiddleware);
 
