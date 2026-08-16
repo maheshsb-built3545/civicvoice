@@ -546,7 +546,7 @@ export default function LandingApp() {
                   </div>
 
                   {/* Right side WhatsApp Mockup Screen animation */}
-                  <div className="flex justify-center relative">
+                  <div className="flex justify-center relative pointer-events-none select-none">
                     <div className="absolute inset-0 bg-primary/10 blur-[100px] rounded-full -z-10 animate-pulse" />
 
                     {/* Sleek, modern smartphone device frame */}
@@ -571,7 +571,7 @@ export default function LandingApp() {
                       {/* WhatsApp Messages stream with background wallpaper */}
                       <div
                         ref={chatContainerRef}
-                        className="relative flex-1 overflow-y-auto max-h-[562px] bg-[#efeae2] dark:bg-[#0b141a] px-3 pt-16 pb-14 space-y-2 overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-300/60 [&::-webkit-scrollbar-thumb]:rounded-full"
+                        className="relative flex-1 overflow-hidden pointer-events-none max-h-[562px] bg-[#efeae2] dark:bg-[#0b141a] px-3 pt-16 pb-14 space-y-2 overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-300/60 [&::-webkit-scrollbar-thumb]:rounded-full"
                         style={{ overscrollBehavior: 'contain', overflowAnchor: 'none' }}
                       >
                         {/* WhatsApp Background Wallpaper Overlay */}
