@@ -173,8 +173,13 @@ async function runE2ETestPipeline() {
                     from: waSenderId,
                     id: `wamid_${Date.now()}`,
                     timestamp: `${Math.floor(Date.now() / 1000)}`,
-                    type: 'text',
-                    text: { body: 'Garbage accumulation near Metro station, Central Zone Ward 10' },
+                    type: 'location',
+                    location: {
+                      latitude: 12.97,
+                      longitude: 77.64,
+                      name: 'Central Zone Metro Station',
+                      address: 'Central Zone Ward 10, Bangalore'
+                    },
                   },
                 ],
               },
@@ -191,8 +196,22 @@ async function runE2ETestPipeline() {
     const cleanPhone = waSenderId.replace(/\D/g, '');
     await ConversationState.create({
       phoneNumber: cleanPhone,
-      step: 'active',
-      language: 'en'
+      step: 'location_requested',
+      language: 'en',
+      pendingStructuredComplaint: {
+        rawText: 'Garbage accumulation near Metro station, Central Zone Ward 10',
+        structured: {
+          category: 'sanitation',
+          subcategory: 'garbage_accumulation',
+          description: 'Garbage accumulation near Metro station',
+          urgency: 'medium',
+          locationMentioned: 'Central Zone Ward 10',
+          language: 'en',
+          confidence: 0.9,
+          needsClarification: false
+        },
+        traceId: `trace_wa_${Date.now()}`
+      }
     });
     await Citizen.create({
       name: 'Test Citizen',
