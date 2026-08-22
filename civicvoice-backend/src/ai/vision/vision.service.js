@@ -10,6 +10,7 @@ const AppError = require('../../utils/AppError');
 const logger = require('../../utils/logger');
 const { buildSystemPrompt, buildUserPrompt } = require('./vision.prompt');
 const { validateVisionAnalysis } = require('./vision.schema');
+const { cleanAndParseJSON } = require('../../utils/jsonSanitizer');
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const MODEL = 'llama-3.2-11b-vision-preview';
@@ -90,7 +91,7 @@ async function analyzeImage(buffer, mimeType, captionText = '') {
 
   let visionAnalysis;
   try {
-    visionAnalysis = JSON.parse(content);
+    visionAnalysis = cleanAndParseJSON(content);
   } catch (err) {
     logger.error('Failed to parse JSON content from Groq Vision response', { content, error: err.message });
     throw new AppError('VISION_FAILED', 502, 'Vision model failed to produce valid JSON output');

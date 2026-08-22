@@ -13,6 +13,7 @@ const logger = require('../../utils/logger');
 const { EXTRACTION_TOOL_DEFINITION } = require('./extraction.schema');
 const { buildSystemPrompt, buildUserPrompt } = require('./extraction.prompt');
 const { trackServiceFailure } = require('../../utils/redis');
+const { cleanAndParseJSON } = require('../../utils/jsonSanitizer');
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const MODEL = 'openai/gpt-oss-20b';
@@ -115,9 +116,9 @@ async function extractComplaint(transcript, metadata = {}) {
     if (message?.tool_calls && message.tool_calls.length > 0) {
       const toolCall = message.tool_calls[0];
       const argsString = toolCall.function?.arguments;
-      structuredComplaint = JSON.parse(argsString);
+      structuredComplaint = cleanAndParseJSON(argsString);
     } else if (message?.content) {
-      structuredComplaint = JSON.parse(message.content);
+      structuredComplaint = cleanAndParseJSON(message.content);
     }
   } catch (err) {
     logger.error('Failed to parse structured complaint from tool arguments', { message, error: err.message });

@@ -466,8 +466,7 @@ async function finalizeIntakeComplaint(sender, state, lang) {
   } catch (err) {
     logger.error('Error creating complaint at final state', { error: err.message });
     state.step = 'collecting_input';
-    state.pendingComplaint = null;
-    state.pendingStructuredComplaint = null;
+    // Preserve session state buffer if saving to DB fails
     await state.save();
     await sendMessage(sender, lang === 'mr' ? 'तक्रार जतन करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा.' : lang === 'hi' ? 'शिकायत सहेजते समय त्रुटि हुई। कृपया पुन: प्रयास करें।' : 'Sorry, there was an error saving your complaint. Please try again.');
   }
@@ -1488,13 +1487,36 @@ async function enqueueWhatsappWebhook(payload, traceId) {
 
 async function runExtractionAndGoToLocation(sender, state, lang, traceId) {
   try {
-    const combinedText = state.pendingComplaint.inputs.map(i => i.text).join('\n');
+    if (!state.pendingComplaint || !Array.isArray(state.pendingComplaint.inputs)) {
+      throw new Error('State pendingComplaint or inputs is missing/invalid');
+    }
+
+    const combinedText = state.pendingComplaint.inputs.map(i => i.text).filter(Boolean).join('\n');
     const firstImage = state.pendingComplaint.inputs.find(i => i.type === 'image' && i.attachment);
     const firstImageAttachment = firstImage ? firstImage.attachment : null;
 
     const { extractComplaint } = require('../../ai/extraction/extraction.service');
-    const extractionResult = await extractComplaint(combinedText, { channel: 'whatsapp', senderId: sender });
-    const { structuredComplaint } = extractionResult;
+    
+    let structuredComplaint;
+    try {
+      const extractionResult = await extractComplaint(combinedText, { channel: 'whatsapp', senderId: sender });
+      structuredComplaint = extractionResult.structuredComplaint;
+    } catch (extractErr) {
+      logger.error('[Worker] AI extraction failed or timed out, falling back to default structured metadata', {
+        error: extractErr.message,
+        traceId
+      });
+      structuredComplaint = {
+        category: 'general',
+        subcategory: null,
+        description: combinedText.substring(0, 150) || 'Raw complaint details',
+        urgency: 'medium',
+        locationMentioned: null,
+        language: lang || 'en',
+        confidence: 0.5,
+        needsClarification: true
+      };
+    }
 
     state.pendingStructuredComplaint = {
       rawText: combinedText,
