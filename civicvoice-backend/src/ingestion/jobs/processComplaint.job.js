@@ -1486,6 +1486,11 @@ async function enqueueWhatsappWebhook(payload, traceId) {
 }
 
 async function runExtractionAndGoToLocation(sender, state, lang, traceId) {
+  // Comprehensive Diagnostic Logging
+  console.log('[Grievance] Received Done button for user:', sender);
+  console.log('[Grievance] Buffer contents:', state?.pendingComplaint?.inputs);
+  console.log('[Grievance] Triggering LLM analysis...');
+
   try {
     if (!state.pendingComplaint || !Array.isArray(state.pendingComplaint.inputs)) {
       throw new Error('State pendingComplaint or inputs is missing/invalid');
@@ -1527,7 +1532,24 @@ async function runExtractionAndGoToLocation(sender, state, lang, traceId) {
     state.step = 'location_requested';
     state.lastInteractionAt = new Date();
     state.markModified('pendingStructuredComplaint');
-    await state.save();
+
+    // Isolate Database Write Operations with its own error boundary
+    try {
+      await state.save();
+    } catch (saveErr) {
+      logger.error('[Worker] ConversationState save failed during extraction', {
+        error: saveErr.message,
+        stack: saveErr.stack,
+        traceId
+      });
+      // Send meaningful feedback on true database/system hard errors instead of "Complaint analysis failed"
+      await sendMessage(sender, lang === 'mr' 
+        ? 'तक्रार जतन करताना प्रणालीमध्ये त्रुटी आली. कृपया थोड्या वेळाने प्रयत्न करा.' 
+        : lang === 'hi' 
+        ? 'शिकायत सहेजते समय सिस्टम त्रुटि हुई। कृपया थोड़ी देर बाद प्रयास करें।' 
+        : 'A system database error occurred while saving your complaint details. Please try again in a moment.');
+      return;
+    }
 
     const cancelHelpFooter = lang === 'mr'
       ? '\n\n_रीसेट करण्यासाठी CANCEL किंवा मदतीसाठी HELP लिहा._'
